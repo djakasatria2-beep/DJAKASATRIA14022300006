@@ -1,11 +1,11 @@
 Analisis Sentimen JMO Mobile
-👤 Identitas
 
-Djaka Satria
 
-14022300006
+>Djaka Satria
 
-Big Data (UTS)
+>14022300006
+
+>Big Data (UTS)
 
 1. Deskripsi
 
