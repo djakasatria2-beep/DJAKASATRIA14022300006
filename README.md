@@ -2,25 +2,36 @@ Analisis Sentimen JMO Mobile
 👤 Identitas
 
 Djaka Satria
+
 14022300006
+
 Big Data (UTS)
 
-📌 Deskripsi
+1. Deskripsi
 
 Analisis sentimen ini dilakukan pada ulasan aplikasi JMO Mobile dari Google Play Store menggunakan NLP.
 
 Sentimen dibagi menjadi:
 
-Positive
-Neutral
-Negative
-⚙️ Tools
-Python
-Google Play Scraper
-Transformers
-Pandas
-Matplotlib
+a.Positive
 
-🎯Kesimpulan
+b.Neutral
+
+c.Negative
+
+
+2. Tools:
+
+-Python
+
+-Google Play Scraper
+
+-Transformers
+
+-Pandas
+
+-Matplotlib
+
+3. Kesimpulan
 
 Analisis ini digunakan untuk melihat opini pengguna terhadap aplikasi JMO Mobile.
