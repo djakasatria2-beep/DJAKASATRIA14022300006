@@ -1,4 +1,4 @@
-Analisis Sentimen JMO Mobile
+# Analisis Sentimen JMO Mobile
 
 
 >Djaka Satria
@@ -7,31 +7,31 @@ Analisis Sentimen JMO Mobile
 
 >Big Data (UTS)
 
-1. Deskripsi
+# Deskripsi
 
 Analisis sentimen ini dilakukan pada ulasan aplikasi JMO Mobile dari Google Play Store menggunakan NLP.
 
 Sentimen dibagi menjadi:
 
-# Positive
+- Positive
 
-# Neutral
+- Neutral
 
-# Negative
+- Negative
 
 
-2. Tools:
+# Tools:
 
-# Python
+* Python
 
-# Google Play Scraper
+* Google Play Scraper
 
-# Transformers
+* Transformers
 
-# Pandas
+* Pandas
 
-# Matplotlib
+* Matplotlib
 
-3. Kesimpulan
+# kesimpulan
 
 Analisis ini digunakan untuk melihat opini pengguna terhadap aplikasi JMO Mobile.
