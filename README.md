@@ -1,34 +1,26 @@
-Analisis Sentimen Ulasan Aplikasi JMO Mobile
+Analisis Sentimen JMO Mobile
 👤 Identitas
 
-Nama: Djaka Satria
-NIM: 14022300006
-Mata Kuliah: Big Data
-Tugas: UTS
+Djaka Satria
+14022300006
+Big Data (UTS)
 
- 1.Deskripsi
+📌 Deskripsi
 
-Proyek ini melakukan analisis sentimen pada ulasan pengguna aplikasi JMO Mobile (BPJS Ketenagakerjaan) dari Google Play Store menggunakan teknik Natural Language Processing (NLP).
+Analisis sentimen ini dilakukan pada ulasan aplikasi JMO Mobile dari Google Play Store menggunakan NLP.
 
 Sentimen dibagi menjadi:
+
 Positive
 Neutral
 Negative
-
-2 Tools yang Digunakan
+⚙️ Tools
 Python
 Google Play Scraper
-Hugging Face Transformers
+Transformers
 Pandas
 Matplotlib
 
-3 Hasil
-Dataset ulasan pengguna
-Hasil analisis sentimen
-Grafik distribusi sentimen
-4 kesimpulan
+🎯Kesimpulan
 
-Analisis ini digunakan untuk mengetahui opini pengguna terhadap aplikasi JMO Mobile berdasarkan ulasan di Google Play Store.
-
-Hasil analisis sentimen
-Grafik distribusi sentimen
+Analisis ini digunakan untuk melihat opini pengguna terhadap aplikasi JMO Mobile.
