@@ -1,26 +1,67 @@
+!pip install google-play-scraper vaderSentiment deep-translator matplotlib
+from google_play_scraper import reviews, Sort
+import pandas as pd
 import matplotlib.pyplot as plt
-import os
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
-def plot_sentiment(df):
-    counts = df['sentiment'].value_counts()
+# SCRAPING DATA
+result, _ = reviews(
+    'com.bpjstku',
+    lang='id',
+    country='id',
+    sort=Sort.NEWEST,
+    count=200
+)
 
-    labels = counts.index
-    values = counts.values
+df = pd.DataFrame(result)
+df = df[['userName', 'score', 'at', 'content']]
 
-    colors = ['green', 'gray', 'red']
+df.to_csv('ulasan_jmo.csv', index=False)
+print("Data berhasil diambil")
 
-    bars = plt.bar(labels, values, color=colors)
+# LOAD MODEL
+model_name = "w11wo/indonesian-roberta-base-sentiment-classifier"
 
-    plt.title("Analisis Sentimen JMO Mobile")
-    plt.xlabel("Sentimen")
-    plt.ylabel("Jumlah")
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
-    for bar in bars:
-        yval = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width()/2, yval, int(yval),
-                 ha='center', va='bottom')
+label_map = {0: 'Positif', 1: 'Netral', 2: 'Negatif'}
 
-    os.makedirs('outputs', exist_ok=True)
-    plt.savefig('outputs/grafik_sentimen.png')
+# ANALISIS SENTIMEN
+def get_sentiment(text):
+    if pd.isna(text):
+        return 'Netral'
 
-    plt.show()
+    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True)
+
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    logits = outputs.logits
+    pred = torch.argmax(logits, dim=1).item()
+
+    return label_map[pred]
+
+df['sentiment'] = df['content'].apply(get_sentiment)
+
+# VISUALISASI
+sentiment_counts = df['sentiment'].value_counts()
+
+labels = sentiment_counts.index
+values = sentiment_counts.values
+
+colors = ['green', 'gray', 'red']
+
+bars = plt.bar(labels, values, color=colors)
+
+plt.title("Analisis Sentimen JMO Mobile (IndoBERT)")
+plt.xlabel("Sentimen")
+plt.ylabel("Jumlah")
+
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, yval, int(yval),
+             ha='center', va='bottom')
+
+plt.show()
