@@ -13,24 +13,24 @@ Analisis sentimen ini dilakukan pada ulasan aplikasi JMO Mobile dari Google Play
 
 Sentimen dibagi menjadi:
 
-a.Positive
+# Positive
 
-b.Neutral
+# Neutral
 
-c.Negative
+# Negative
 
 
 2. Tools:
 
--Python
+# Python
 
--Google Play Scraper
+# Google Play Scraper
 
--Transformers
+# Transformers
 
--Pandas
+# Pandas
 
--Matplotlib
+# Matplotlib
 
 3. Kesimpulan
 
