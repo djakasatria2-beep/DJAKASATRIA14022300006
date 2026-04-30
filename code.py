@@ -1,111 +1,114 @@
-
-# =========================
-# 1. INSTALL LIBRARY
-# =========================
+# =========================================================
+# INSTALL LIBRARY
+# =========================================================
 !pip install google-play-scraper transformers torch matplotlib pandas
 
-# =========================
-# 2. IMPORT LIBRARY
-# =========================
-from google_play_scraper import reviews, Sort
+# =========================================================
+# IMPORT
+# =========================================================
+from google_play_scraper import reviews
+from transformers import pipeline
 import pandas as pd
+import csv
 import matplotlib.pyplot as plt
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
 
-# =========================
-# 3. SCRAPING DATA PLAY STORE
-# =========================
-result, _ = reviews(
+# =========================================================
+# 1. SCRAPING DATA
+# =========================================================
+print("Mengambil data ulasan...")
+
+res = reviews(
     'com.bpjstku',
     lang='id',
     country='id',
-    sort=Sort.NEWEST,
-    count=200
+    count=100
 )
 
-df = pd.DataFrame(result)
+result = res[0]
 
-# ambil kolom penting
-df = df[['userName', 'score', 'at', 'content']]
+# =========================================================
+# 2. LOAD MODEL SENTIMENT
+# =========================================================
+print("Load model sentiment...")
 
-# simpan data mentah
-df.to_csv('ulasan_jmo.csv', index=False)
+sentiment_pipe = pipeline(
+    "sentiment-analysis",
+    model="w11wo/indonesian-roberta-base-sentiment-classifier"
+)
 
-print("Data berhasil diambil")
-print(df.head())
+# =========================================================
+# 3. ANALISIS SENTIMEN
+# =========================================================
+print("Analisis sentimen...")
 
-# =========================
-# 4. LOAD MODEL SENTIMENT
-# =========================
-model_name = "w11wo/indonesian-roberta-base-sentiment-classifier"
+hasil_final = []
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+for i, review in enumerate(result):
+    print(f"Proses {i+1}/{len(result)}", end='\r')
+    
+    teks = review['content']
+    clean_text = teks[:512] if teks else ""
+    
+    prediksi = sentiment_pipe(clean_text)[0]
+    
+    hasil_final.append({
+        'userName': review['userName'],
+        'score': review['score'],
+        'at': review['at'],
+        'content': teks,
+        'sentiment': prediksi['label'],
+        'confidence': round(prediksi['score'], 4)
+    })
 
-label_map = {0: 'Positif', 1: 'Netral', 2: 'Negatif'}
+print("\nSelesai!")
 
-# =========================
-# 5. FUNGSI ANALISIS SENTIMEN
-# =========================
-def get_sentiment(text):
-    if pd.isna(text):
-        return 'Netral'
+# =========================================================
+# 4. SIMPAN KE sample_data
+# =========================================================
+filename = '/content/sample_data/hasil_sentimen.csv'
 
-    inputs = tokenizer(
-        text,
-        return_tensors='pt',
-        truncation=True,
-        padding=True,
-        max_length=512
-    )
+with open(filename, 'w', newline='', encoding='utf-8') as f:
+    writer = csv.DictWriter(f, fieldnames=[
+        'userName','score','at','content','sentiment','confidence'
+    ])
+    writer.writeheader()
+    writer.writerows(hasil_final)
 
-    with torch.no_grad():
-        outputs = model(**inputs)
+print("File disimpan di sample_data")
 
-    logits = outputs.logits
-    pred = torch.argmax(logits, dim=1).item()
+# =========================================================
+# 5. DATAFRAME
+# =========================================================
+df = pd.DataFrame(hasil_final)
+df.head()
 
-    return label_map[pred]
-
-# =========================
-# 6. TAMBAH KOLOM SENTIMEN
-# =========================
-df['sentiment'] = df['content'].apply(get_sentiment)
-
-print("\nHasil dengan sentimen:")
-print(df[['content', 'sentiment']].head(10))
-
-# =========================
-# 7. ANALISIS DISTRIBUSI
-# =========================
+# =========================================================
+# 6. GRAFIK BERWARNA
+# =========================================================
 sentiment_counts = df['sentiment'].value_counts()
 
-print("\nDistribusi Sentimen:")
-print(sentiment_counts)
+colors = {
+    'positive': 'green',
+    'neutral': 'gray',
+    'negative': 'red'
+}
 
-# =========================
-# 8. VISUALISASI
-# =========================
-labels = sentiment_counts.index
-values = sentiment_counts.values
+bar_colors = [colors.get(x, 'blue') for x in sentiment_counts.index]
 
-colors = ['green', 'gray', 'red']
+plt.figure(figsize=(6,4))
+plt.bar(sentiment_counts.index, sentiment_counts.values, color=bar_colors)
 
-bars = plt.bar(labels, values, color=colors)
+# label angka di atas batang
+for i, v in enumerate(sentiment_counts.values):
+    plt.text(i, v + 0.5, str(v), ha='center')
 
-plt.title("Analisis Sentimen JMO Mobile (IndoBERT)")
-plt.xlabel("Sentimen")
-plt.ylabel("Jumlah")
-
-for bar in bars:
-    yval = bar.get_height()
-    plt.text(
-        bar.get_x() + bar.get_width()/2,
-        yval,
-        int(yval),
-        ha='center',
-        va='bottom'
-    )
+plt.title('Distribusi Sentimen Ulasan')
+plt.xlabel('Sentimen')
+plt.ylabel('Jumlah')
 
 plt.show()
+
+# =========================================================
+# 7. CEK FILE
+# =========================================================
+!ls /content/sample_data
