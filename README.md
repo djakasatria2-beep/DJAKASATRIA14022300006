@@ -1,0 +1,2 @@
+# DJAKASATRIA14022300006
+Uts Mata Kuliah Big data, Djaka satria 14022300006 6C-BIS
