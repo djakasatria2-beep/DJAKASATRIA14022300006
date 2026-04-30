@@ -1,5 +1,0 @@
-google-play-scraper
-pandas
-transformers
-torch
-matplotlib
